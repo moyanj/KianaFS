@@ -1,13 +1,27 @@
 import hashlib
 from fastapi import FastAPI, UploadFile
 from fastapi.responses import StreamingResponse
-import models
+from pydantic import BaseModel, field_validator
 import db
 import drivers
 import random
 from contextlib import asynccontextmanager
 import traceback
-import json
+
+
+class AddStorage(BaseModel):
+    name: str
+    driver: str
+    driver_settings: dict = {}
+    priority: int = 5
+    max_size: int = -1
+    enabled: bool = True
+
+    @field_validator("driver")
+    def driver_validator(cls, v):
+        if v not in drivers.drivers.keys():
+            raise ValueError("Invalid driver")
+        return v
 
 
 @asynccontextmanager
@@ -31,7 +45,7 @@ def api_root():
 
 
 @app.post("/api/storage/add")
-async def add_storage(data: models.AddStorage):
+async def add_storage(data: AddStorage):
     try:
         await db.Storage.create(**data.model_dump())
         return {"message": "Storage added successfully"}
