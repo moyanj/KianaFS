@@ -39,7 +39,7 @@ class File(Model):
     hash = fields.CharField(max_length=40, unique=True, pk=True)  # 文件哈希值 (SHA1)
     filename = fields.CharField(max_length=8192, unique=True)  # 文件名
     chunks = fields.JSONField()  # 文件块哈希值列表
-    size = fields.BigIntField()  # 文件大小 (B)
+    size = fields.FloatField()  # 文件大小 (KB)
     update_time = fields.DatetimeField(auto_now=True)  # 更新时间
 
     class Meta:  # type: ignore
@@ -51,7 +51,7 @@ class File(Model):
 
 class Chunk(Model):
     hash = fields.CharField(max_length=40, unique=True, pk=True)  # 文件块哈希值 (SHA1)
-    size = fields.BigIntField()  # 文件块大小 (B)
+    size = fields.FloatField()  # 文件大小 (KB)
     storages = fields.ManyToManyField("models.Storage")  # 多对多关系
     update_time = fields.DatetimeField(auto_now=True)  # 更新时间
 

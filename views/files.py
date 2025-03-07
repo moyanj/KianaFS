@@ -47,7 +47,7 @@ async def upload(
             await driver.add_chunk(fp=chunk, hash=chunk_hash)
 
         # 创建 Chunk 实例并保存到数据库
-        chunk_instance = await db.Chunk.create(hash=chunk_hash, size=len(chunk))
+        chunk_instance = await db.Chunk.create(hash=chunk_hash, size=len(chunk) / 1024)
 
         # 将 Chunk 与 Storage 关联
         for storage in selected_storages:
@@ -62,7 +62,7 @@ async def upload(
                 filename if filename else file.filename
             ),  # 使用 filename 参数或文件本身的文件名
             chunks=chunks,  # 将 chunks 列表转换为 JSON 字符串
-            size=total_size,  # 文件大小以 KB 为单位
+            size=total_size / 1024,  # 文件大小以 KB 为单位
         )
         return {"message": "File uploaded successfully", "hash": file_hash}
     except Exception as e:
@@ -96,7 +96,7 @@ async def download(key: str, path: bool = False):
         media_type="application/octet-stream",
         headers={
             "Content-Disposition": f"attachment; filename={quote(file.filename)}",
-            "Content-Length": str(file.size),
+            "Content-Length": str(int(file.size * 1024)),
         },
     )
 
