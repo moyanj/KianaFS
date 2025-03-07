@@ -7,7 +7,7 @@ from typing import Any, Coroutine
 
 async def init_db():
     await Tortoise.init(
-        db_url=os.environ.get("DB_URL", "sqlite://db.sqlite3"),
+        db_url=os.environ.get("DB_URL", "sqlite://KianaFS.db"),
         modules={"models": ["db.schema"]},  # 替换为你的模块名
     )
     await Tortoise.generate_schemas()
