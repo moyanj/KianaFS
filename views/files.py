@@ -10,10 +10,9 @@ from urllib.parse import quote
 
 router = APIRouter(prefix="/api/file")
 
+
 @router.post("/upload")
-async def upload(
-    file: UploadFile, filename: Optional[str] = None
-):
+async def upload(file: UploadFile, filename: Optional[str] = None):
     filename = filename if filename else file.filename
 
     if not filename:
@@ -52,7 +51,9 @@ async def upload(
             try:
                 await driver.add_chunk(fp=chunk, hash=chunk_hash)
             except Exception as e:
-                raise HTTPException(status_code=500, detail=f"Failed to add chunk to storage: {str(e)}")
+                raise HTTPException(
+                    status_code=500, detail=f"Failed to add chunk to storage: {str(e)}"
+                )
 
         # 创建 Chunk 实例并保存到数据库
         chunk_instance = await db.Chunk.create(hash=chunk_hash, size=len(chunk) / 1024)
@@ -74,7 +75,10 @@ async def upload(
         )
         return {"message": "File uploaded successfully", "hash": file_hash}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to save file info to database: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to save file info to database: {str(e)}"
+        )
+
 
 @router.get("/download/{key:path}")
 async def download(key: str, path: bool = False):
@@ -99,7 +103,10 @@ async def download(key: str, path: bool = False):
                 chunk_data = await driver.get_chunk(chunk.hash)
                 yield chunk_data
             except Exception as e:
-                raise HTTPException(status_code=500, detail=f"Failed to get chunk from storage: {str(e)}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to get chunk from storage: {str(e)}",
+                )
 
     return StreamingResponse(
         response_data(),  # type: ignore
@@ -109,6 +116,7 @@ async def download(key: str, path: bool = False):
             "Content-Length": str(int(file.size * 1024)),
         },
     )
+
 
 @router.get("/metadata/{key:path}")
 async def file_metadata(key: str, path: bool = False):
@@ -128,7 +136,10 @@ async def file_metadata(key: str, path: bool = False):
             "chunks": file.chunks,  # 存储分块哈希值列表
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get file metadata: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get file metadata: {str(e)}"
+        )
+
 
 @router.get("/list")
 async def list_file(page: int = 1, page_size: int = 10):
@@ -146,6 +157,7 @@ async def list_file(page: int = 1, page_size: int = 10):
         ]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to list file: {str(e)}")
+
 
 @router.delete("/delete/{key:path}")
 async def delete_file(key: str, path: bool = False):
@@ -169,9 +181,34 @@ async def delete_file(key: str, path: bool = False):
             try:
                 await driver.delete_chunk(chunk.hash)
             except Exception as e:
-                raise HTTPException(status_code=500, detail=f"Failed to delete chunk from storage: {str(e)}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to delete chunk from storage: {str(e)}",
+                )
         await chunk.delete()
 
     # 删除文件记录
     await file.delete()
     return {"message": "File deleted successfully"}
+
+
+@router.get("/list/<path:path>")
+async def list_file_by_path(path: str):
+    if not path.endswith("/"):
+        path += "/"
+
+    if path == "/":
+        path = ""
+    try:
+        file_list = await db.File.filter(filename__startswith=path)
+        return [
+            {
+                "hash": file.hash,
+                "filename": file.filename,
+                "size": file.size,  # 文件大小以 KB 为单位
+                "chunks": file.chunks,  # 存储分块哈希值列表
+            }
+            for file in file_list
+        ]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to list file: {str(e)}")
