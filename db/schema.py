@@ -24,9 +24,8 @@ class Storage(Model):
     id = fields.IntField(pk=True, auto_increment=True, generated=True)  # 存储节点 ID
     name = fields.CharField(max_length=255, unique=True, index=True)  # 存储节点名称
     driver = fields.CharField(max_length=255)  # 存储驱动类型
-    priority = fields.IntField(index=True)  # 优先级，用于选择存储节点
+    priority = fields.SmallIntField(index=True)  # 优先级，用于选择存储节点
     enabled = fields.BooleanField(default=True)  # 是否启用
-    max_size = fields.BigIntField(default=-1)  # 最大存储空间 (KB)，-1 表示无限制
     driver_settings = fields.JSONField()  # 驱动设置，使用 JSONField 存储结构化数据
 
     class Meta:  # type: ignore
@@ -40,7 +39,7 @@ class File(Model):
     hash = fields.CharField(max_length=40, unique=True, pk=True)  # 文件哈希值 (SHA1)
     filename = fields.CharField(max_length=8192, unique=True)  # 文件名
     chunks = fields.JSONField()  # 文件块哈希值列表
-    size = fields.IntField()  # 文件大小 (KB)
+    size = fields.BigIntField()  # 文件大小 (B)
     update_time = fields.DatetimeField(auto_now=True)  # 更新时间
 
     class Meta:  # type: ignore
@@ -52,7 +51,7 @@ class File(Model):
 
 class Chunk(Model):
     hash = fields.CharField(max_length=40, unique=True, pk=True)  # 文件块哈希值 (SHA1)
-    size = fields.BigIntField()  # 文件块大小 (KB)
+    size = fields.BigIntField()  # 文件块大小 (B)
     storages = fields.ManyToManyField("models.Storage")  # 多对多关系
     update_time = fields.DatetimeField(auto_now=True)  # 更新时间
 

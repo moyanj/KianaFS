@@ -14,7 +14,7 @@ async def init_db():
 
     if await Config.get_or_none(key="init") is None:
         await Config.create(key="init", value=True)
-        await Config.create(key="chunk_size", value=512)
+        await Config.create(key="chunk_size", value=1024 * 1024)
         await Config.create(key="num_storages", value=3)
 
         admin_pwd = secrets.token_hex(8)

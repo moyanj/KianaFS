@@ -12,7 +12,6 @@ class AddStorage(BaseModel):
     driver: str
     driver_settings: dict = {}
     priority: int = 5
-    max_size: int = -1
     enabled: bool = True
 
     @field_validator("driver")
@@ -41,6 +40,7 @@ async def list_storage():
                 "driver": storage.driver,
                 "priority": storage.priority,
                 "enabled": storage.enabled,
+                "name": storage.name,
             }
             for storage in storage_list
         ]

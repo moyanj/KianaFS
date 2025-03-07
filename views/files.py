@@ -5,6 +5,7 @@ import drivers
 import hashlib
 import random
 from typing import Optional
+from urllib.parse import quote
 
 router = APIRouter(prefix="/api/file")
 
@@ -46,7 +47,7 @@ async def upload(
             await driver.add_chunk(fp=chunk, hash=chunk_hash)
 
         # 创建 Chunk 实例并保存到数据库
-        chunk_instance = await db.Chunk.create(hash=chunk_hash, size=len(chunk) // 1024)
+        chunk_instance = await db.Chunk.create(hash=chunk_hash, size=len(chunk))
 
         # 将 Chunk 与 Storage 关联
         for storage in selected_storages:
@@ -61,7 +62,7 @@ async def upload(
                 filename if filename else file.filename
             ),  # 使用 filename 参数或文件本身的文件名
             chunks=chunks,  # 将 chunks 列表转换为 JSON 字符串
-            size=total_size // 1024,  # 文件大小以 KB 为单位
+            size=total_size,  # 文件大小以 KB 为单位
         )
         return {"message": "File uploaded successfully", "hash": file_hash}
     except Exception as e:
@@ -78,10 +79,12 @@ async def download(key: str, path: bool = False):
     if not file:
         return {"message": "File not found"}, 404
 
-    chunks = await db.Chunk.filter(hash__in=file.chunks).all()
-
     async def response_data():
-        for chunk in chunks:
+        for chunk in file.chunks:
+            chunk = await db.Chunk.get_or_none(hash=chunk)
+            if not chunk:
+                raise Exception("Chunk not found")
+
             await chunk.fetch_related("storages")
             storage = random.choice(chunk.storages)
             driver = drivers.drivers[storage.driver](storage.driver_settings)  # type: ignore
@@ -92,8 +95,8 @@ async def download(key: str, path: bool = False):
         response_data(),  # type: ignore
         media_type="application/octet-stream",
         headers={
-            "Content-Disposition": f"attachment; filename={file.filename}",
-            "Content-Length": str(file.size * 1024),
+            "Content-Disposition": f"attachment; filename={quote(file.filename)}",
+            "Content-Length": str(file.size),
         },
     )
 
