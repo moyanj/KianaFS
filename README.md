@@ -22,7 +22,7 @@ KianaFS is a lightweight, high-performance distributed storage system designed f
 ### Supported Drivers
 - [x] Local Disk
 - [x] AList V3
-- [ ] Amazon S3
+- [x] Amazon S3
 - [ ] FTP
 - [ ] SMB
 - [ ] SSH

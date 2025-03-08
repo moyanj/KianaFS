@@ -23,7 +23,7 @@ KianaFS是一款智能轻量级分布式存储系统，兼具高性能与易用�
 ### 驱动支持
 - [x] 本地磁盘
 - [x] AList V3
-- [ ] Amazon S3
+- [x] Amazon S3
 - [ ] FTP
 - [ ] SMB
 - [ ] SSH

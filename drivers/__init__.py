@@ -1,6 +1,8 @@
 import os
 import importlib
 from typing import Any, Dict, List, Tuple, Optional, Generator
+import asyncio
+import anyio.to_thread
 
 
 class Driver:
@@ -14,7 +16,7 @@ class Driver:
         if self.name is None or self.name_human is None:
             raise ValueError("name and name_human must be set in the driver class")
 
-    async def add_chunk(self, fp, hash):
+    async def add_chunk(self, data: bytes, hash: str):
         raise NotImplementedError(
             "add_chunk method must be implemented in the driver class"
         )
@@ -28,6 +30,9 @@ class Driver:
         raise NotImplementedError(
             "delete_chunk method must be implemented in the driver class"
         )
+
+    async def close(self):
+        pass
 
     def __repr__(self) -> str:
         """
@@ -60,6 +65,17 @@ def load_driver() -> Generator[type[Driver]]:
             except ImportError as e:
                 print(f"Failed to load module {module_name}: {e}")
                 exit()
+
+
+def async_run(func):
+    loop = asyncio.get_event_loop()
+    if not loop.is_running():
+        return loop.run_until_complete(func)
+    return asyncio.run(func)
+
+
+async def sync_run(func, *args):
+    return await anyio.to_thread.run_sync(func, *args)
 
 
 drivers = {storager.name: storager for storager in load_driver()}

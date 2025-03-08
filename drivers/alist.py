@@ -1,4 +1,4 @@
-from drivers import Driver
+from drivers import Driver, async_run
 import os
 from alist import AList, AListUser, AListFile
 import asyncio
@@ -39,17 +39,10 @@ class AListDriver(Driver):
         super().__init__(settings)
         self.user = AListUser(self.setting["username"], self.setting["password"])
         self.alist = AList(self.setting["server"])
-        self.login()
+        async_run(self.alist.login(self.user))
 
-    def login(self):
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            loop.run_until_complete(self.alist.login(self.user))
-        else:
-            asyncio.run(self.alist.login(self.user))
-
-    async def add_chunk(self, fp, hash):
-        return await self.alist.upload(os.path.join(self.setting["root"], hash), fp)
+    async def add_chunk(self, data, hash):
+        return await self.alist.upload(os.path.join(self.setting["root"], hash), data)
 
     async def get_chunk(self, hash):
         data = await self.alist.open(os.path.join(self.setting["root"], hash))
