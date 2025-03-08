@@ -1,23 +1,17 @@
 import views
-from fastapi import APIRouter, UploadFile, HTTPException
+from fastapi import APIRouter, UploadFile, HTTPException, Request, Header, Body
 from fastapi.responses import StreamingResponse
 import db
 import drivers
 import hashlib
-import random
-from typing import Optional
+import aiofiles
+from typing import Optional, Annotated
 from urllib.parse import quote
 
 router = APIRouter(prefix="/api/file")
 
 
-@router.post("/upload")
-async def upload(file: UploadFile, filename: Optional[str] = None):
-    filename = filename if filename else file.filename
-
-    if not filename:
-        raise HTTPException(status_code=400, detail="Filename is required")
-
+async def upload_file(file, filename: str):
     # 检查文件是否已存在
     if await db.File.exists(filename=filename):
         raise HTTPException(status_code=400, detail="File already exists")
@@ -69,11 +63,45 @@ async def upload(file: UploadFile, filename: Optional[str] = None):
             chunks=chunks,  # 将 chunks 列表转换为 JSON 字符串
             size=total_size / 1024,  # 文件大小以 KB 为单位
         )
-        return {"message": "File uploaded successfully", "hash": file_hash}
+        return file_hash
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Failed to save file info to database: {str(e)}"
         )
+    pass
+
+
+@router.post("/upload")
+async def upload(file: UploadFile, filename: Optional[str] = None):
+    filename = filename if filename else file.filename
+
+    if not filename:
+        raise HTTPException(status_code=400, detail="Filename is required")
+
+    # 调用 upload_file 函数
+    try:
+        file_hash = await upload_file(file, filename)
+        return {"message": "File uploaded successfully", "hash": file_hash}
+    except HTTPException as e:
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
+
+
+@router.post("/upload/stream")
+async def upload_stream(x_filename: Annotated[str, Header()], request: Request):
+    file_name = x_filename
+    if not file_name:
+        raise HTTPException(status_code=400, detail="Filename is required")
+    async with aiofiles.tempfile.SpooledTemporaryFile(
+        max_size=15 * 1024 * 1024
+    ) as temp_file:
+        async for chunk in request.stream():
+            await temp_file.write(chunk)
+        await temp_file.seek(0)
+        try:
+            file_hash = await upload_file(temp_file, file_name)
+            return {"message": "File uploaded successfully", "hash": file_hash}
+        except HTTPException as e:
+            raise HTTPException(status_code=e.status_code, detail=e.detail)
 
 
 @router.get("/download/{key:path}")
