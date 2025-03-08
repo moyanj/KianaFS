@@ -30,6 +30,8 @@ KianaFS is a lightweight, high-performance distributed storage system designed f
 
 ## Architecture
 
+![export.jpeg](https://s2.loli.net/2025/03/08/DIjrNf3WRTF9uwP.jpg)
+
 KianaFS uses a modular design with a core module for file system logic, a storage driver layer for backend integration, and a metadata database for consistency.
 
 ## Quick Setup
