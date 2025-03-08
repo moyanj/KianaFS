@@ -9,7 +9,7 @@ def cli():
 
 @cli.command()
 @click.option("--host", default="0.0.0.0", help="Host to listen on")
-@click.option("--port", default=8000, type=int, help="Port to listen on")
+@click.option("--port", default=23901, type=int, help="Port to listen on")
 def start(host, port):
     import uvicorn
 
