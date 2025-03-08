@@ -1,5 +1,6 @@
 import click
 import multiprocessing
+import hashlib
 
 
 @click.group()
@@ -22,6 +23,7 @@ def set_admin_password(password):
     import db
     import asyncio
 
+    password = hashlib.sha256(password.encode()).hexdigest()
     asyncio.run(db.init_db())
     asyncio.run(
         db.User.update_or_create(
