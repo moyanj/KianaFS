@@ -3,20 +3,24 @@
 ![GitHub](https://img.shields.io/github/license/moyan/kianafs)
 ![Database](https://img.shields.io/badge/database-PostgreSQL-blue)
 
-面向云原生时代的智能轻量级分布式存储系统，兼具高性能与易用性。KianaFS旨在为开发者和企业提供灵活、高效的存储解决方案，支持多种存储后端，适应多样化的业务场景。
+<p align="center">
+    <a>English</a> &nbsp;&bull;&nbsp;
+    <a href="README_zh.md">中文</a>
+</p>
 
-## 功能特性
+KianaFS is a lightweight, high-performance distributed storage system designed for ease of use.
 
-- **虚拟文件系统** - 将异构存储映射为统一目录树结构，简化文件管理。
-- **异构存储统一接入** - 通过适配器模式集成多种存储协议，支持无缝切换存储后端。
-- **高可用性**: 通过冗余存储和故障转移机制，确保数据的持续可用性，避免单点故障。
-- **分布式存储**: 数据分布在多个节点上，提升存储容量和可用性，支持大规模数据存储需求。
-- **高可扩展性**: 支持多种存储后端，满足不同场景的需求，从本地存储到云端存储均可轻松扩展。
-- **跨平台访问**: 提供RESTful API、CLI工具和Web管理界面（开发中），支持多终端操作。
-- **容器化部署**: 提供Docker镜像和Kubernetes部署方案，简化部署流程，提升运维效率。
+## Features
 
-### 驱动支持
-- [x] 本地磁盘
+- **Virtual File System**: Maps heterogeneous storage into a unified directory structure.
+- **Unified Storage Access**: Supports multiple storage protocols via adapters.
+- **High Availability**: Redundant storage and failover mechanisms.
+- **Distributed Storage**: Data spread across nodes for scalability.
+- **Cross-Platform Access**: RESTful API, CLI tools, and web interface (in development).
+- **Containerized Deployment**: Docker and Kubernetes support.
+
+### Supported Drivers
+- [x] Local Disk
 - [x] AList V3
 - [ ] Amazon S3
 - [ ] FTP
@@ -24,45 +28,36 @@
 - [ ] SSH
 - [ ] HTTP API
 
-## 架构设计
+## Architecture
 
-![export.jpeg](https://s2.loli.net/2025/03/08/DIjrNf3WRTF9uwP.jpg)
+KianaFS uses a modular design with a core module for file system logic, a storage driver layer for backend integration, and a metadata database for consistency.
 
-KianaFS采用模块化设计，核心模块负责文件系统的逻辑处理，存储驱动层通过适配器模式支持多种存储后端，元数据库用于存储文件系统的元数据，确保数据的一致性和可靠性。
+## Quick Setup
 
-## 快速配置
+(Under Development)
 
-(编写中)
+## Tech Stack
 
-我们正在完善快速配置文档，帮助用户快速上手KianaFS。预计将在下一版本中提供详细的配置指南。
+- **Core**: FastAPI, Tortoise ORM
+- **Database**: MySQL, PostgreSQL, SQLite, SQL Server
+- **Containerization**: Docker, Kubernetes
+- **Tools**: Black, pyright, MkDocs
 
-## 技术栈
+## Contributing
 
-- **核心框架**：FastAPI, Tortoise ORM
-- **数据库**：MySQL, PostgreSQL, SQLite, SQL Server
-- **容器化**：Docker, Kubernetes
-- **开发工具**：Black, pyright
-- **文档生成**：MkDocs
+1. Fork the repo and create a feature branch.
+2. Submit code with consistent style and passing tests.
+3. Open a Pull Request with clear details.
 
-KianaFS采用现代化的技术栈，确保系统的高性能和易维护性。FastAPI提供高效的API服务，Tortoise ORM简化数据库操作，Docker和Kubernetes支持容器化部署，提升系统的可移植性和扩展性。
+## License
 
-## 参与贡献
+MIT License.
 
-我们欢迎社区成员积极参与KianaFS的开发与维护！以下是参与贡献的步骤：
+## Contact
 
-1. Fork仓库并创建特性分支。
-2. 提交代码，确保代码风格一致，并通过单元测试。
-3. 创建Pull Request，详细描述你的修改内容和动机。
+- **Issues**: [GitHub Issues](https://github.com/moyanj/kianafs/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/moyanj/kianafs/discussions)
+- **Email**: kianafs@moyanjdc.top
+- **Twitter**: [@KianaFS](https://twitter.com/KianaFS)
 
-## 许可证
-
-KianaFS遵循MIT许可证。你可以自由使用、修改和分发KianaFS，但需保留版权声明和许可证信息。
-
-## 联系我们
-
-- **问题追踪**: [GitHub Issues](https://github.com/moyanj/kianafs/issues)
-- **讨论区**: [GitHub Discussions](https://github.com/moyanj/kianafs/discussions)
-- **邮件支持**: kianafs@moyanjdc.top
-- **社交媒体**: [@KianaFS](https://twitter.com/KianaFS)
-
-如果你有任何问题、建议或反馈，欢迎随时联系我们！
+For questions or feedback, reach out anytime!
