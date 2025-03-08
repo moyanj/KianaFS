@@ -5,6 +5,7 @@ import db
 import drivers
 import hashlib
 import aiofiles
+import xxhash
 from typing import Optional, Annotated
 from urllib.parse import quote
 
@@ -16,21 +17,25 @@ async def upload_file(file, filename: str):
     if await db.File.exists(filename=filename):
         raise HTTPException(status_code=400, detail="File already exists")
 
-    # 存储分块到驱动
+    # 获取可用的存储节点列表
     storage_list = await db.Storage.filter(enabled=True).all()
     if not storage_list:
         raise HTTPException(status_code=500, detail="No available storage")
 
-    # 分块处理文件
+    # 创建 File 实例但不保存到数据库
+    file_db = db.File(filename=filename)
+
+    # 获取分块大小配置
     chunk_size: int = await db.get_cfg("chunk_size", 1024 * 1024)
     chunks = []
     total_size = 0
     num_storages = await db.get_cfg("num_storages", 3)
     while chunk := await file.read(chunk_size):
         total_size += len(chunk)
-        chunk_hash = hashlib.sha1(chunk + filename.encode()).hexdigest()
+        chunk_hash = xxhash.xxh3_128_hexdigest(chunk)
         chunks.append(chunk_hash)
 
+        # 如果分块已存在，则跳过存储
         if await db.Chunk.exists(hash=chunk_hash):
             continue
 
@@ -52,23 +57,22 @@ async def upload_file(file, filename: str):
         for storage in storage_list:
             await chunk_instance.storages.add(storage)
 
+        # 将 Chunk 与 File 关联
+        await file_db.chunks.add(chunk_instance)
+
+    # 计算文件哈希值并设置文件大小
+    file_hash = xxhash.xxh3_128_hexdigest(str(chunks).encode())
+    file_db.hash = file_hash
+    file_db.size = total_size / 1024  # 文件大小以 KB 为单位
+
     # 保存文件信息到数据库
     try:
-        file_hash = hashlib.sha1(str(chunks).encode()).hexdigest()
-        await db.File.create(
-            hash=file_hash,
-            filename=(
-                filename if filename else file.filename
-            ),  # 使用 filename 参数或文件本身的文件名
-            chunks=chunks,  # 将 chunks 列表转换为 JSON 字符串
-            size=total_size / 1024,  # 文件大小以 KB 为单位
-        )
+        await file_db.save()
         return file_hash
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Failed to save file info to database: {str(e)}"
         )
-    pass
 
 
 @router.post("/upload")

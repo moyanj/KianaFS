@@ -12,6 +12,7 @@ dependencies = [
     "python-multipart>=0.0.20",
     "tortoise-orm>=0.24.2",
     "uvicorn>=0.34.0",
+    "xxhash>=3.5.0",
 ]
 
 [project.optional-dependencies]

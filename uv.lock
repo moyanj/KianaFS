@@ -170,58 +170,6 @@ wheels = [
 ]
 
 [[package]]
-name = "dfs"
-version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "aiosqlite" },
-    { name = "click" },
-    { name = "fastapi" },
-    { name = "pyjwt" },
-    { name = "python-multipart" },
-    { name = "tortoise-orm" },
-    { name = "uvicorn" },
-]
-
-[package.optional-dependencies]
-alist = [
-    { name = "alist3" },
-]
-fast = [
-    { name = "httptools" },
-    { name = "orjson" },
-    { name = "uvloop" },
-]
-local = [
-    { name = "aiofiles" },
-]
-s3 = [
-    { name = "boto3" },
-]
-sqlite = [
-    { name = "aiosqlite" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "aiofiles", marker = "extra == 'local'" },
-    { name = "aiosqlite", specifier = ">=0.21.0" },
-    { name = "aiosqlite", marker = "extra == 'sqlite'", specifier = ">=0.21.0" },
-    { name = "alist3", marker = "extra == 'alist'", specifier = ">=1.3.6" },
-    { name = "boto3", marker = "extra == 's3'", specifier = ">=1.37.7" },
-    { name = "click", specifier = ">=8.1.8" },
-    { name = "fastapi", specifier = ">=0.115.11" },
-    { name = "httptools", marker = "extra == 'fast'", specifier = ">=0.6.4" },
-    { name = "orjson", marker = "extra == 'fast'", specifier = ">=3.10.15" },
-    { name = "pyjwt", specifier = ">=2.10.1" },
-    { name = "python-multipart", specifier = ">=0.0.20" },
-    { name = "tortoise-orm", specifier = ">=0.24.2" },
-    { name = "uvicorn", specifier = ">=0.34.0" },
-    { name = "uvloop", marker = "extra == 'fast'", specifier = ">=0.21.0" },
-]
-provides-extras = ["s3", "alist", "sqlite", "local", "fast"]
-
-[[package]]
 name = "fastapi"
 version = "0.115.11"
 source = { registry = "https://pypi.org/simple" }
@@ -309,6 +257,60 @@ sdist = { url = "https://files.pythonhosted.org/packages/00/2a/e867e8531cf3e36b4
 wheels = [
     { url = "https://files.pythonhosted.org/packages/31/b4/b9b800c45527aadd64d5b442f9b932b00648617eb5d63d2c7a6587b7cafc/jmespath-1.0.1-py3-none-any.whl", hash = "sha256:02e2e4cc71b5bcab88332eebf907519190dd9e6e82107fa7f83b1003a6252980", size = 20256 },
 ]
+
+[[package]]
+name = "kianafs"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "aiosqlite" },
+    { name = "click" },
+    { name = "fastapi" },
+    { name = "pyjwt" },
+    { name = "python-multipart" },
+    { name = "tortoise-orm" },
+    { name = "uvicorn" },
+    { name = "xxhash" },
+]
+
+[package.optional-dependencies]
+alist = [
+    { name = "alist3" },
+]
+fast = [
+    { name = "httptools" },
+    { name = "orjson" },
+    { name = "uvloop" },
+]
+local = [
+    { name = "aiofiles" },
+]
+s3 = [
+    { name = "boto3" },
+]
+sqlite = [
+    { name = "aiosqlite" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiofiles", marker = "extra == 'local'" },
+    { name = "aiosqlite", specifier = ">=0.21.0" },
+    { name = "aiosqlite", marker = "extra == 'sqlite'", specifier = ">=0.21.0" },
+    { name = "alist3", marker = "extra == 'alist'", specifier = ">=1.3.6" },
+    { name = "boto3", marker = "extra == 's3'", specifier = ">=1.37.7" },
+    { name = "click", specifier = ">=8.1.8" },
+    { name = "fastapi", specifier = ">=0.115.11" },
+    { name = "httptools", marker = "extra == 'fast'", specifier = ">=0.6.4" },
+    { name = "orjson", marker = "extra == 'fast'", specifier = ">=3.10.15" },
+    { name = "pyjwt", specifier = ">=2.10.1" },
+    { name = "python-multipart", specifier = ">=0.0.20" },
+    { name = "tortoise-orm", specifier = ">=0.24.2" },
+    { name = "uvicorn", specifier = ">=0.34.0" },
+    { name = "uvloop", marker = "extra == 'fast'", specifier = ">=0.21.0" },
+    { name = "xxhash", specifier = ">=3.5.0" },
+]
+provides-extras = ["s3", "alist", "sqlite", "local", "fast"]
 
 [[package]]
 name = "multidict"
@@ -583,6 +585,29 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/d2/19/f5b78616566ea68edd42aacaf645adbf71fbd83fc52281fba555dc27e3f1/uvloop-0.21.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f3df876acd7ec037a3d005b3ab85a7e4110422e4d9c1571d4fc89b0fc41b6816", size = 4701068 },
     { url = "https://files.pythonhosted.org/packages/47/57/66f061ee118f413cd22a656de622925097170b9380b30091b78ea0c6ea75/uvloop-0.21.0-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:bd53ecc9a0f3d87ab847503c2e1552b690362e005ab54e8a48ba97da3924c0dc", size = 4454428 },
     { url = "https://files.pythonhosted.org/packages/63/9a/0962b05b308494e3202d3f794a6e85abe471fe3cafdbcf95c2e8c713aabd/uvloop-0.21.0-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:a5c39f217ab3c663dc699c04cbd50c13813e31d917642d459fdcec07555cc553", size = 4660018 },
+]
+
+[[package]]
+name = "xxhash"
+version = "3.5.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/00/5e/d6e5258d69df8b4ed8c83b6664f2b47d30d2dec551a29ad72a6c69eafd31/xxhash-3.5.0.tar.gz", hash = "sha256:84f2caddf951c9cbf8dc2e22a89d4ccf5d86391ac6418fe81e3c67d0cf60b45f", size = 84241 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c9/b8/e4b3ad92d249be5c83fa72916c9091b0965cb0faeff05d9a0a3870ae6bff/xxhash-3.5.0-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:37889a0d13b0b7d739cfc128b1c902f04e32de17b33d74b637ad42f1c55101f6", size = 31795 },
+    { url = "https://files.pythonhosted.org/packages/fc/d8/b3627a0aebfbfa4c12a41e22af3742cf08c8ea84f5cc3367b5de2d039cce/xxhash-3.5.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:97a662338797c660178e682f3bc180277b9569a59abfb5925e8620fba00b9fc5", size = 30792 },
+    { url = "https://files.pythonhosted.org/packages/c3/cc/762312960691da989c7cd0545cb120ba2a4148741c6ba458aa723c00a3f8/xxhash-3.5.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7f85e0108d51092bdda90672476c7d909c04ada6923c14ff9d913c4f7dc8a3bc", size = 220950 },
+    { url = "https://files.pythonhosted.org/packages/fe/e9/cc266f1042c3c13750e86a535496b58beb12bf8c50a915c336136f6168dc/xxhash-3.5.0-cp313-cp313-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:cd2fd827b0ba763ac919440042302315c564fdb797294d86e8cdd4578e3bc7f3", size = 199980 },
+    { url = "https://files.pythonhosted.org/packages/bf/85/a836cd0dc5cc20376de26b346858d0ac9656f8f730998ca4324921a010b9/xxhash-3.5.0-cp313-cp313-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:82085c2abec437abebf457c1d12fccb30cc8b3774a0814872511f0f0562c768c", size = 428324 },
+    { url = "https://files.pythonhosted.org/packages/b4/0e/15c243775342ce840b9ba34aceace06a1148fa1630cd8ca269e3223987f5/xxhash-3.5.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:07fda5de378626e502b42b311b049848c2ef38784d0d67b6f30bb5008642f8eb", size = 194370 },
+    { url = "https://files.pythonhosted.org/packages/87/a1/b028bb02636dfdc190da01951d0703b3d904301ed0ef6094d948983bef0e/xxhash-3.5.0-cp313-cp313-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:c279f0d2b34ef15f922b77966640ade58b4ccdfef1c4d94b20f2a364617a493f", size = 207911 },
+    { url = "https://files.pythonhosted.org/packages/80/d5/73c73b03fc0ac73dacf069fdf6036c9abad82de0a47549e9912c955ab449/xxhash-3.5.0-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:89e66ceed67b213dec5a773e2f7a9e8c58f64daeb38c7859d8815d2c89f39ad7", size = 216352 },
+    { url = "https://files.pythonhosted.org/packages/b6/2a/5043dba5ddbe35b4fe6ea0a111280ad9c3d4ba477dd0f2d1fe1129bda9d0/xxhash-3.5.0-cp313-cp313-musllinux_1_2_i686.whl", hash = "sha256:bcd51708a633410737111e998ceb3b45d3dbc98c0931f743d9bb0a209033a326", size = 203410 },
+    { url = "https://files.pythonhosted.org/packages/a2/b2/9a8ded888b7b190aed75b484eb5c853ddd48aa2896e7b59bbfbce442f0a1/xxhash-3.5.0-cp313-cp313-musllinux_1_2_ppc64le.whl", hash = "sha256:3ff2c0a34eae7df88c868be53a8dd56fbdf592109e21d4bfa092a27b0bf4a7bf", size = 210322 },
+    { url = "https://files.pythonhosted.org/packages/98/62/440083fafbc917bf3e4b67c2ade621920dd905517e85631c10aac955c1d2/xxhash-3.5.0-cp313-cp313-musllinux_1_2_s390x.whl", hash = "sha256:4e28503dccc7d32e0b9817aa0cbfc1f45f563b2c995b7a66c4c8a0d232e840c7", size = 414725 },
+    { url = "https://files.pythonhosted.org/packages/75/db/009206f7076ad60a517e016bb0058381d96a007ce3f79fa91d3010f49cc2/xxhash-3.5.0-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:a6c50017518329ed65a9e4829154626f008916d36295b6a3ba336e2458824c8c", size = 192070 },
+    { url = "https://files.pythonhosted.org/packages/1f/6d/c61e0668943a034abc3a569cdc5aeae37d686d9da7e39cf2ed621d533e36/xxhash-3.5.0-cp313-cp313-win32.whl", hash = "sha256:53a068fe70301ec30d868ece566ac90d873e3bb059cf83c32e76012c889b8637", size = 30172 },
+    { url = "https://files.pythonhosted.org/packages/96/14/8416dce965f35e3d24722cdf79361ae154fa23e2ab730e5323aa98d7919e/xxhash-3.5.0-cp313-cp313-win_amd64.whl", hash = "sha256:80babcc30e7a1a484eab952d76a4f4673ff601f54d5142c26826502740e70b43", size = 30041 },
+    { url = "https://files.pythonhosted.org/packages/27/ee/518b72faa2073f5aa8e3262408d284892cb79cf2754ba0c3a5870645ef73/xxhash-3.5.0-cp313-cp313-win_arm64.whl", hash = "sha256:4811336f1ce11cac89dcbd18f3a25c527c16311709a89313c3acaf771def2d4b", size = 26801 },
 ]
 
 [[package]]
