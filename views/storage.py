@@ -4,7 +4,7 @@ from pydantic import BaseModel, field_validator
 import db
 import drivers
 
-router = APIRouter()
+router = APIRouter(prefix="/api/storage")
 
 
 class AddStorage(BaseModel):
@@ -21,7 +21,7 @@ class AddStorage(BaseModel):
         return v
 
 
-@router.post("/api/storage/add")
+@router.post("/add")
 async def add_storage(data: AddStorage):
     try:
         await db.Storage.create(**data.model_dump())
@@ -30,7 +30,7 @@ async def add_storage(data: AddStorage):
         return {"message": f"Failed to add storage: {str(e)}"}, 500
 
 
-@router.get("/api/storage/list")
+@router.get("/list")
 async def list_storage():
     try:
         storage_list = await db.Storage.all()

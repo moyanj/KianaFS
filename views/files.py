@@ -1,4 +1,4 @@
-import logging
+import views
 from fastapi import APIRouter, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse
 import db
@@ -26,12 +26,12 @@ async def upload(file: UploadFile, filename: Optional[str] = None):
     storage_list = await db.Storage.filter(enabled=True).all()
     if not storage_list:
         raise HTTPException(status_code=500, detail="No available storage")
-    # 提取优先级
-    priorities = [item.priority for item in storage_list]
+
     # 分块处理文件
     chunk_size: int = await db.get_cfg("chunk_size", 1024 * 1024)
     chunks = []
     total_size = 0
+    num_storages = await db.get_cfg("num_storages", 3)
     while chunk := await file.read(chunk_size):
         total_size += len(chunk)
         chunk_hash = hashlib.sha1(chunk + filename.encode()).hexdigest()
@@ -39,27 +39,23 @@ async def upload(file: UploadFile, filename: Optional[str] = None):
 
         if await db.Chunk.exists(hash=chunk_hash):
             continue
-        # 根据优先级选择多个存储驱动
-        num_storages = await db.get_cfg("num_storages", 3)
-        selected_storages = random.choices(
-            storage_list, weights=priorities, k=num_storages
-        )
 
         # 将分块存储到多个驱动
-        for storage in selected_storages:
-            driver = drivers.drivers[storage.driver](storage.driver_settings)  # type: ignore
-            try:
-                await driver.add_chunk(fp=chunk, hash=chunk_hash)
-            except Exception as e:
-                raise HTTPException(
-                    status_code=500, detail=f"Failed to add chunk to storage: {str(e)}"
-                )
+        try:
+            await views.add_chunk(
+                fp=chunk,
+                hash=chunk_hash,
+                storage_list=storage_list,
+                num_storages=num_storages,
+            )
+        except HTTPException as e:
+            raise HTTPException(status_code=e.status_code, detail=e.detail)
 
         # 创建 Chunk 实例并保存到数据库
         chunk_instance = await db.Chunk.create(hash=chunk_hash, size=len(chunk) / 1024)
 
         # 将 Chunk 与 Storage 关联
-        for storage in selected_storages:
+        for storage in storage_list:
             await chunk_instance.storages.add(storage)
 
     # 保存文件信息到数据库
@@ -92,21 +88,7 @@ async def download(key: str, path: bool = False):
 
     async def response_data():
         for chunk in file.chunks:
-            chunk = await db.Chunk.get_or_none(hash=chunk)
-            if not chunk:
-                raise Exception("Chunk not found")
-
-            await chunk.fetch_related("storages")
-            storage = random.choice(chunk.storages)
-            driver = drivers.drivers[storage.driver](storage.driver_settings)  # type: ignore
-            try:
-                chunk_data = await driver.get_chunk(chunk.hash)
-                yield chunk_data
-            except Exception as e:
-                raise HTTPException(
-                    status_code=500,
-                    detail=f"Failed to get chunk from storage: {str(e)}",
-                )
+            yield await views.get_chunk(chunk)
 
     return StreamingResponse(
         response_data(),  # type: ignore
