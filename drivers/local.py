@@ -21,12 +21,12 @@ class LocalDriver(Driver):
         self.path = settings["path"]
         os.makedirs(self.path, exist_ok=True)
 
-    async def add_chunk(self, fp, hash):
+    async def add_chunk(self, data, hash):
         async with aiofiles.open(
             os.path.join(self.path, hash),
             "wb",
         ) as f:
-            await f.write(fp)
+            await f.write(data)
 
     async def get_chunk(self, hash):
         async with aiofiles.open(
