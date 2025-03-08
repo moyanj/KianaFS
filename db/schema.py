@@ -1,17 +1,34 @@
 from tortoise import fields, Tortoise
 from tortoise.models import Model
-import enum
+
+try:
+    import orjson as json
+except ImportError:
+    import orjson as json
 
 
-class FileStatus(enum.Enum):
-    uploading = "uploading"
-    completed = "completed"
-    deleted = "deleted"
+class StrJSONField(fields.TextField):  # 将 CharField 改为 TextField
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def to_python_value(self, value):
+        try:
+            return json.loads(value)  # 尝试解析为 JSON
+        except json.JSONDecodeError:
+            return value
+
+    def to_db_value(self, value, instance):
+        # 如果值是字典或列表，转换为 JSON 字符串；否则直接存储
+        v = json.dumps(value)
+        if isinstance(v, bytes):
+            return v.decode("utf-8")
+        else:
+            return v
 
 
 class Config(Model):
     key = fields.CharField(max_length=255, unique=True, index=True)  # 配置键
-    value = fields.JSONField()  # 配置值，使用 JSONField 存储结构化数据
+    value = StrJSONField()  # 配置值，使用 JSONField 存储结构化数据
 
     class Meta:  # type: ignore
         db_table = "config"  # 明确指定表名

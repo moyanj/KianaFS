@@ -5,6 +5,7 @@ import db
 from views.files import router as files_router
 from views.storage import router as storage_router
 from views.chunk import router as chunk_router
+from views.user import router as user_router
 
 
 @asynccontextmanager
@@ -13,6 +14,7 @@ async def lifespan(app: FastAPI):
     app.include_router(files_router)
     app.include_router(storage_router)
     app.include_router(chunk_router)
+    app.include_router(user_router)
     yield
     await db.Tortoise.close_connections()
 

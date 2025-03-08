@@ -2,7 +2,8 @@ from tortoise import Tortoise
 import os
 from .schema import *
 import secrets
-from typing import Any, Coroutine
+from typing import Any
+import hashlib
 
 
 async def init_db():
@@ -16,10 +17,15 @@ async def init_db():
         await Config.create(key="init", value=True)
         await Config.create(key="chunk_size", value=1024 * 1024)
         await Config.create(key="num_storages", value=3)
+        await Config.create(key="secret_key", value=str(secrets.token_hex(16)))
 
         admin_pwd = secrets.token_hex(8)
         print(f"admin password: {admin_pwd}")
-        await User.create(username="admin", password=admin_pwd, permission="rwa")
+        await User.create(
+            username="admin",
+            password=str(hashlib.sha256(admin_pwd.encode()).hexdigest()),
+            permission="rwa",
+        )
 
 
 async def get_cfg(key: str, default: Any = None):
