@@ -1,5 +1,6 @@
 from tortoise import fields, Tortoise
 from tortoise.models import Model
+from typing import Any
 
 try:
     import orjson as json
@@ -28,7 +29,7 @@ class StrJSONField(fields.TextField):  # 将 CharField 改为 TextField
 
 class Config(Model):
     key = fields.CharField(max_length=255, unique=True, index=True)  # 配置键
-    value = StrJSONField()  # 配置值，使用 JSONField 存储结构化数据
+    value: Any = StrJSONField()  # 配置值，使用 JSONField 存储结构化数据
 
     class Meta:  # type: ignore
         db_table = "config"  # 明确指定表名
@@ -83,7 +84,7 @@ class User(Model):
     id = fields.IntField(pk=True, auto_increment=True, generated=True, index=True)
     username = fields.CharField(max_length=255, unique=True)
     password = fields.CharField(max_length=80)
-    permission = fields.CharField(max_length=255)
+    permission = fields.CharField(max_length=16)
     create_time = fields.DatetimeField(auto_now_add=True)
 
     class Meta:  # type: ignore

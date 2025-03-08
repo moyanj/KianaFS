@@ -2,6 +2,8 @@ import db
 import drivers
 import random
 from fastapi.exceptions import HTTPException
+from fastapi import Depends, Header
+import jwt
 
 
 async def get_chunk(hash: str):
@@ -53,3 +55,36 @@ async def add_chunk(fp, hash: str, storage_list, num_storages):
             status_code=500,
             detail=f"Failed to upload to {num_storages} storages. Succeeded: {success_count}",
         )
+
+
+def login():
+    async def wrapper(token=Header(None, alias="Authorization")):
+        if not token:
+            raise HTTPException(status_code=401, detail="Token is missing")
+
+        try:
+            # 解码并验证 Token
+            secret_key = await db.get_cfg("secret_key", "114514")  # type: ignore
+            payload = jwt.decode(token, secret_key, algorithms=["HS256"])
+
+            # 校验 payload 是否包含必要字段
+            if "username" not in payload:
+                raise HTTPException(status_code=401, detail="Invalid token payload")
+
+            # 验证用户是否存在
+            user = await db.User.get_or_none(username=payload["username"])
+            if not user:
+                raise HTTPException(status_code=401, detail="User not found")
+            elif not user.has_permission("w"):
+                raise HTTPException(
+                    status_code=403, detail="User does not have permission"
+                )
+
+        except jwt.exceptions.ExpiredSignatureError:
+            raise HTTPException(status_code=401, detail="Token expired")
+        except jwt.exceptions.DecodeError:
+            raise HTTPException(status_code=401, detail="Invalid token format")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail="Internal server error")
+
+    return Depends(wrapper)

@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 import db
+import views
 import hashlib
 import jwt
 
@@ -24,7 +25,7 @@ async def login(username: str, password: str, raw: bool = True):
 
 
 @router.post("/register")
-async def register(username: str, password: str, raw: bool = True):
+async def register(username: str, password: str, raw: bool = True, _=views.login()):
     user = await db.User.get_or_none(username=username)
     if user is not None:
         return {"error": "Username already exists"}

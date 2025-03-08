@@ -1,5 +1,5 @@
 import views
-from fastapi import APIRouter, UploadFile, HTTPException, Request, Header, Body
+from fastapi import APIRouter, UploadFile, HTTPException, Request, Header, Depends
 from fastapi.responses import StreamingResponse
 import db
 import drivers
@@ -76,7 +76,11 @@ async def upload_file(file, filename: str):
 
 
 @router.post("/upload")
-async def upload(file: UploadFile, filename: Optional[str] = None):
+async def upload(
+    file: UploadFile,
+    filename: Optional[str] = None,
+    _=views.login(),
+):
     filename = filename if filename else file.filename
 
     if not filename:
@@ -91,7 +95,11 @@ async def upload(file: UploadFile, filename: Optional[str] = None):
 
 
 @router.post("/upload/stream")
-async def upload_stream(x_filename: Annotated[str, Header()], request: Request):
+async def upload_stream(
+    x_filename: Annotated[str, Header()],
+    request: Request,
+    _=views.login(),
+):
     file_name = x_filename
     if not file_name:
         raise HTTPException(status_code=400, detail="Filename is required")
@@ -109,7 +117,10 @@ async def upload_stream(x_filename: Annotated[str, Header()], request: Request):
 
 
 @router.get("/download/{key:path}")
-async def download(key: str, path: bool = False):
+async def download(
+    key: str,
+    path: bool = False,
+):
     if path:
         file = await db.File.get_or_none(filename=key)
     else:
@@ -174,7 +185,7 @@ async def list_file(page: int = 1, page_size: int = 10):
 
 
 @router.delete("/delete/{key:path}")
-async def delete_file(key: str, path: bool = False):
+async def delete_file(key: str, path: bool = False, _=views.login()):
     if path:
         file = await db.File.get_or_none(filename=key)
     else:

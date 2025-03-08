@@ -3,6 +3,7 @@ from pydantic import BaseModel, field_validator
 
 import db
 import drivers
+import views
 
 router = APIRouter(prefix="/api/storage")
 
@@ -22,7 +23,7 @@ class AddStorage(BaseModel):
 
 
 @router.post("/add")
-async def add_storage(data: AddStorage):
+async def add_storage(data: AddStorage, _=views.login()):
     try:
         await db.Storage.create(**data.model_dump())
         return {"message": "Storage added successfully"}
