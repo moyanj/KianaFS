@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 import db
-import drivers
+import views
 
 router = APIRouter(prefix="/api/chunk")
 
@@ -34,14 +34,4 @@ async def list_chunk(page: int = 1, page_size: int = 10):
 
 @router.get("/download/<hash>")
 async def download(hash: str):
-    chunk = await db.Chunk.get_or_none(hash=hash)
-    if not chunk:
-        raise HTTPException(status_code=404, detail="Chunk not found")
-    await chunk.fetch_related("storages")
-    for storage in chunk.storages:
-        try:
-            driver = drivers.drivers[storage.driver](storage.driver_settings)
-            return driver.get_chunk(chunk.hash)
-        except Exception as e:
-            continue
-    raise HTTPException(status_code=500, detail="Failed to download chunk")
+    return await views.get_chunk(hash)

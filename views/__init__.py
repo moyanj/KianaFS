@@ -18,7 +18,7 @@ async def get_chunk(hash: str):
     random.shuffle(storages)  # type: ignore
     for storage in storages:
         try:
-            driver = drivers.drivers[storage.driver](storage.driver_settings)  # type: ignore
+            driver = await drivers.get_storage(storage.driver, storage.driver_settings)
             chunk_data = await driver.get_chunk(chunk.hash)
             return chunk_data
         except Exception as e:
@@ -37,10 +37,10 @@ async def add_chunk(fp, hash: str, storage_list, num_storages):
     while success_count < num_storages and attempts < max_attempts:
         # 每次随机选择一个存储（允许重复）
         storage = random.choices(storage_list, weights=priorities, k=1)[0]
-        driver = drivers.drivers[storage.driver](storage.driver_settings)  # type: ignore
+        driver = await drivers.get_storage(storage.driver, storage.driver_settings)
 
         try:
-            await driver.add_chunk(fp=fp, hash=hash)
+            await driver.add_chunk(data=fp, hash=hash)
             success_count += 1
         except Exception as e:
             pass  # 失败时静默继续

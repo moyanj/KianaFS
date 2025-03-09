@@ -16,6 +16,9 @@ class Driver:
         if self.name is None or self.name_human is None:
             raise ValueError("name and name_human must be set in the driver class")
 
+    async def connect(self):
+        pass
+
     async def add_chunk(self, data: bytes, hash: str):
         raise NotImplementedError(
             "add_chunk method must be implemented in the driver class"
@@ -76,6 +79,12 @@ def async_run(func):
 
 async def sync_run(func, *args):
     return await anyio.to_thread.run_sync(func, *args)
+
+
+async def get_storage(name: str, setting: dict) -> Driver:
+    driver = drivers[name](setting)
+    await driver.connect()
+    return driver
 
 
 drivers = {storager.name: storager for storager in load_driver()}

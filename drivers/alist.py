@@ -39,7 +39,9 @@ class AListDriver(Driver):
         super().__init__(settings)
         self.user = AListUser(self.setting["username"], self.setting["password"])
         self.alist = AList(self.setting["server"])
-        async_run(self.alist.login(self.user))
+
+    async def connect(self):
+        await self.alist.login(self.user)
 
     async def add_chunk(self, data, hash):
         return await self.alist.upload(os.path.join(self.setting["root"], hash), data)
