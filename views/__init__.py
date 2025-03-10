@@ -2,8 +2,31 @@ import db
 import drivers
 import random
 from fastapi.exceptions import HTTPException
-from fastapi import Depends, Header
+from fastapi import Depends, Header, Response as FastapiResponse
 import jwt
+import orjson
+from typing import Any
+
+
+class Response(FastapiResponse):
+
+    def __init__(
+        self,
+        data: Any = None,
+        msg: str = "OK",
+        code: int = 200,
+    ):
+        d = {
+            "msg": msg,
+            "success": code == 200,
+            "data": data,
+            "status_code": code,
+        }
+        super().__init__(
+            content=orjson.dumps(d),
+            media_type="application/json",
+            status_code=code,
+        )
 
 
 async def get_chunk(hash: str):
@@ -58,7 +81,7 @@ async def add_chunk(fp, hash: str, storage_list, num_storages):
 
 
 def login():
-    async def wrapper(token=Header(None, alias="Authorization")):
+    async def wrapper(token=Header(None, alias="X-Authorization")):
         if not token:
             raise HTTPException(status_code=401, detail="Token is missing")
 

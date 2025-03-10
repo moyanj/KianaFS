@@ -2,10 +2,7 @@ from tortoise import fields, Tortoise
 from tortoise.models import Model
 from typing import Any
 
-try:
-    import orjson as json
-except ImportError:
-    import orjson as json
+import orjson
 
 
 class StrJSONField(fields.TextField):  # 将 CharField 改为 TextField
@@ -14,8 +11,8 @@ class StrJSONField(fields.TextField):  # 将 CharField 改为 TextField
 
     def to_python_value(self, value):
         try:
-            return json.loads(value)  # 尝试解析为 JSON
-        except json.JSONDecodeError:
+            return orjson.loads(value)  # 尝试解析为 JSON
+        except orjson.JSONDecodeError:
             return value
 
     def to_db_value(self, value, instance):

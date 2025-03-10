@@ -1,7 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from fastapi.exceptions import RequestValidationError
 from contextlib import asynccontextmanager
 
 import db
+import views
 from views.files import router as files_router
 from views.storage import router as storage_router
 from views.chunk import router as chunk_router
@@ -20,6 +23,16 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan, title="KianaFS API")
+
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    return views.Response(msg=exc.detail, code=exc.status_code)
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return views.Response(data=exc.errors(), msg="Request is Invalid", code=400)
 
 
 @app.get("/")
