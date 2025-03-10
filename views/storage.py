@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, field_validator
 
 import db
@@ -26,24 +26,26 @@ class AddStorage(BaseModel):
 async def add_storage(data: AddStorage, _=views.login()):
     try:
         await db.Storage.create(**data.model_dump())
-        return {"message": "Storage added successfully"}
+        return views.Response(msg="Storage added successfully")
     except Exception as e:
-        return {"message": f"Failed to add storage: {str(e)}"}, 500
+        raise HTTPException(status_code=500, detail="Failed to add storage")
 
 
 @router.get("/list")
 async def list_storage():
     try:
         storage_list = await db.Storage.all()
-        return [
-            {
-                "id": storage.id,
-                "driver": storage.driver,
-                "priority": storage.priority,
-                "enabled": storage.enabled,
-                "name": storage.name,
-            }
-            for storage in storage_list
-        ]
+        return views.Response(
+            [
+                {
+                    "id": storage.id,
+                    "driver": storage.driver,
+                    "priority": storage.priority,
+                    "enabled": storage.enabled,
+                    "name": storage.name,
+                }
+                for storage in storage_list
+            ]
+        )
     except Exception as e:
-        return {"message": f"Failed to list storage: {str(e)}"}, 500
+        raise HTTPException(status_code=500, detail="Failed to list storage")

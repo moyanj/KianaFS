@@ -154,12 +154,14 @@ async def file_metadata(key: str, path: bool = False):
         if not file:
             raise HTTPException(status_code=404, detail="File not found")
 
-        return {
-            "hash": file.hash,
-            "filename": file.filename,
-            "size": file.size,  # 文件大小以 KB 为单位
-            "chunks": file.chunks,  # 存储分块哈希值列表
-        }
+        return views.Response(
+            {
+                "hash": file.hash,
+                "filename": file.filename,
+                "size": file.size,  # 文件大小以 KB 为单位
+                "chunks": file.chunks,  # 存储分块哈希值列表
+            }
+        )
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Failed to get file metadata: {str(e)}"
@@ -171,15 +173,17 @@ async def list_file(page: int = 1, page_size: int = 10):
     try:
         offset = (page - 1) * page_size
         file_list = await db.File.all().offset(offset).limit(page_size)
-        return [
-            {
-                "hash": file.hash,
-                "filename": file.filename,
-                "size": file.size,  # 文件大小以 KB 为单位
-                "chunks": file.chunks,  # 存储分块哈希值列表
-            }
-            for file in file_list
-        ]
+        return views.Response(
+            [
+                {
+                    "hash": file.hash,
+                    "filename": file.filename,
+                    "size": file.size,  # 文件大小以 KB 为单位
+                    "chunks": file.chunks,  # 存储分块哈希值列表
+                }
+                for file in file_list
+            ]
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to list file: {str(e)}")
 
@@ -214,7 +218,7 @@ async def delete_file(key: str, path: bool = False, _=views.login()):
 
     # 删除文件记录
     await file.delete()
-    return {"message": "File deleted successfully"}
+    return views.Response(msg="File deleted successfully")
 
 
 @router.get("/list/<path:path>")
@@ -226,14 +230,16 @@ async def list_file_by_path(path: str):
         path = ""
     try:
         file_list = await db.File.filter(filename__startswith=path)
-        return [
-            {
-                "hash": file.hash,
-                "filename": file.filename,
-                "size": file.size,  # 文件大小以 KB 为单位
-                "chunks": file.chunks,  # 存储分块哈希值列表
-            }
-            for file in file_list
-        ]
+        return views.Response(
+            [
+                {
+                    "hash": file.hash,
+                    "filename": file.filename,
+                    "size": file.size,  # 文件大小以 KB 为单位
+                    "chunks": file.chunks,  # 存储分块哈希值列表
+                }
+                for file in file_list
+            ]
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to list file: {str(e)}")
