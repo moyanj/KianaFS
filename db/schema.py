@@ -17,7 +17,7 @@ class StrJSONField(fields.TextField):  # 将 CharField 改为 TextField
 
     def to_db_value(self, value, instance):
         # 如果值是字典或列表，转换为 JSON 字符串；否则直接存储
-        v = json.dumps(value)
+        v = orjson.dumps(value)
         if isinstance(v, bytes):
             return v.decode("utf-8")
         else:
