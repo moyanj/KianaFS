@@ -4,7 +4,6 @@ from .schema import *
 import secrets
 from typing import Any
 import hashlib
-from .cache import get_cache, set_cache
 
 
 async def init_db():

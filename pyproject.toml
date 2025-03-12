@@ -14,8 +14,8 @@ dependencies = [
     "xxhash>=3.5.0",
     "aiofiles>=24.1.0",
     "orjson>=3.10.15",
-    "redis>=5.2.1",
     "python-dotenv>=1.0.1",
+    "aiocache>=0.12.3",
 ]
 
 [project.optional-dependencies]
