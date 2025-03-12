@@ -49,3 +49,20 @@ async def list_storage():
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail="Failed to list storage")
+
+
+@router.get("/drivers")
+async def list_drivers():
+    try:
+        return views.Response(
+            [
+                {
+                    "name": driver.name,
+                    "name_human": driver.name_human,
+                    "settings": driver.setting_define,
+                }
+                for driver in drivers.drivers.values()
+            ]
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to list drivers")
