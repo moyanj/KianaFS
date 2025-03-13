@@ -1,24 +1,33 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Body
 import db
 import views
 import hashlib
 import jwt
+from pydantic import BaseModel
 
 router = APIRouter(prefix="/api/user")
 
 
+class Login(BaseModel):
+    username: str
+    password: str
+    raw: bool = True
+
+
 @router.post("/login")
-async def login(username: str, password: str, raw: bool = True):
-    user = await db.User.get_or_none(username=username)
+async def login(u: Login):
+    user = await db.User.get_or_none(username=u.username)
     if user is None:
         raise HTTPException(status_code=400, detail="Invalid username or password")
 
-    if raw:
-        password = hashlib.sha256(password.encode()).hexdigest()
+    if u.raw:
+        password = hashlib.sha256(u.password.encode()).hexdigest()
+    else:
+        password = u.password
 
     if user.password == password:
         secret_key = await db.get_cfg("secret_key", "114514")
-        token = jwt.encode({"username": username}, secret_key, algorithm="HS256")
+        token = jwt.encode({"username": u.username}, secret_key, algorithm="HS256")
         return views.Response(token)
     else:
         raise HTTPException(status_code=400, detail="Invalid username or password")

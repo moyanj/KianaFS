@@ -21,7 +21,7 @@ watch(
 </script>
 
 <template>
-    <el-menu class="header-menu">
+    <el-menu class="header-menu" :class="{ 'hidden': active === '/login' }">
         <el-menu-item class="header-menu-title">
             <span>KianaFS</span>
         </el-menu-item>
@@ -48,6 +48,10 @@ watch(
         font-size: 2vw;
         text-align: center;
     }
+}
+
+.hidden {
+    display: none;
 }
 </style>
 
