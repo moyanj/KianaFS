@@ -1,75 +1,58 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router';
+import { RouterLink, RouterView, useRouter } from 'vue-router';
+import { ElMenu, ElMenuItem } from 'element-plus';
+import { ref, watch } from "vue";
+
+// 定义 active 引用的类型
+const active = ref<string>("");
+
+// 使用 useRouter 钩子
+const router = useRouter();
+console.log(import.meta.env.BASE_URL)
+// 监听路由变化以更新 active 引用
+watch(
+    () => router.currentRoute.value.path,
+    (newPath) => {
+        active.value = "/" + newPath.split("/")[1];
+        console.log(import.meta.env.BASE_URL)
+    },
+    { immediate: true } // 立即执行一次以设置初始值
+);
 </script>
 
 <template>
-    <header>
-
-    </header>
+    <el-menu class="header-menu">
+        <el-menu-item class="header-menu-title">
+            <span>KianaFS</span>
+        </el-menu-item>
+        <el-menu-item index="/">
+            <router-link to="/">Home</router-link>
+        </el-menu-item>
+        <el-menu-item index="/about">
+            <router-link to="/about">About</router-link>
+        </el-menu-item>
+    </el-menu>
 
     <RouterView />
 </template>
 
 <style scoped>
-header {
-    line-height: 1.5;
-    max-height: 100vh;
+.header-menu {
+    width: 12.5vw;
+    height: 100vh;
+    margin-right: 1vw;
 }
 
-.logo {
-    display: block;
-    margin: 0 auto 2rem;
-}
-
-nav {
-    width: 100%;
-    font-size: 12px;
-    text-align: center;
-    margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-    color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-    background-color: transparent;
-}
-
-nav a {
-    display: inline-block;
-    padding: 0 1rem;
-    border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-    border: 0;
-}
-
-@media (min-width: 1024px) {
-    header {
-        display: flex;
-        place-items: center;
-        padding-right: calc(var(--section-gap) / 2);
+.header-menu-title {
+    span {
+        font-size: 2vw;
+        text-align: center;
     }
+}
+</style>
 
-    .logo {
-        margin: 0 2rem 0 0;
-    }
-
-    header .wrapper {
-        display: flex;
-        place-items: flex-start;
-        flex-wrap: wrap;
-    }
-
-    nav {
-        text-align: left;
-        margin-left: -1rem;
-        font-size: 1rem;
-
-        padding: 1rem 0;
-        margin-top: 1rem;
-    }
+<style>
+#app {
+    display: flex;
 }
 </style>
