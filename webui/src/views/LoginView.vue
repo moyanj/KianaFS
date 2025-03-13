@@ -14,6 +14,10 @@ const form = ref({
     raw: true
 });
 
+if (cookies.get('token')) {
+    router.push('/');
+}
+
 async function submitForm() {
     // 提交表单逻辑
     fetch(server + '/user/login', {
