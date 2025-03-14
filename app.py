@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.exceptions import RequestValidationError
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
@@ -47,6 +48,13 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 @app.get("/")
 def base_root():
     return "Welcome to KianaFS"
+
+
+app.mount(
+    "/webui",
+    StaticFiles(directory="webui/dist", check_dir=False, html=True),
+    name="static",
+)
 
 
 @app.get("/api")
