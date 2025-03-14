@@ -33,7 +33,7 @@ watch(
         <el-menu-item index="/" @click="router.push('/')">
             <TablerDashboard />&nbsp;概览
         </el-menu-item>
-        <el-menu-item index="/storages" @click="router.push('/storages')">
+        <el-menu-item index="/storagers" @click="router.push('/storagers')">
             <TablerDatabase />&nbsp;存储管理
         </el-menu-item>
         <el-menu-item index="/files" @click="router.push('/files')">

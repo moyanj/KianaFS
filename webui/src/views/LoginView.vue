@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElForm, ElFormItem, ElInput, ElButton, ElLink, ElCard } from 'element-plus';
+import { ElForm, ElFormItem, ElInput, ElButton, ElCard } from 'element-plus';
 import { ref } from 'vue';
 import { server } from '@/cfg';
 import { useCookies } from 'vue3-cookies';
