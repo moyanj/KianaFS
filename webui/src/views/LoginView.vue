@@ -30,7 +30,7 @@ async function submitForm() {
         .then(response => response.json())
         .then(data => {
             // 设置cookie
-            cookies.set('token', data.token, "7d");
+            cookies.set('token', data.data, "7d");
             router.push('/');
         })
         .catch(error => {
