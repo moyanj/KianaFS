@@ -23,7 +23,7 @@ KianaFS is a lightweight, high-performance distributed storage system designed f
 - [x] Local Disk
 - [x] AList V3
 - [x] Amazon S3
-- [ ] WebDAV
+- [x] WebDAV
 - [x] FTP
 - [ ] SMB
 - [ ] SSH

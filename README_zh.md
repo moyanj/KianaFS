@@ -24,7 +24,7 @@ KianaFS是一款智能轻量级分布式存储系统，兼具高性能与易用�
 - [x] 本地磁盘
 - [x] AList V3
 - [x] Amazon S3
-- [ ] WebDAV
+- [x] WebDAV
 - [x] FTP
 - [ ] SMB
 - [ ] SSH
