@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { RouterView, useRouter } from 'vue-router';
 import { ElMenu, ElMenuItem } from 'element-plus';
-import { ref, watch } from "vue";
+import { ref, watch, onMounted, onUnmounted } from "vue";
+import { changeTheme } from "./utils";
+import { useCookies } from 'vue3-cookies';
 import TablerDashboard from '~icons/tabler/dashboard';
 import TablerFile from '~icons/tabler/file';
 import TablerDatabase from '~icons/tabler/database';
@@ -10,6 +12,8 @@ import TablerSettings from '~icons/tabler/settings'
 
 // 定义 active 引用的类型
 const active = ref("");
+
+const { cookies } = useCookies();
 
 // 使用 useRouter 钩子
 const router = useRouter();
@@ -23,6 +27,26 @@ watch(
     },
     { immediate: true } // 立即执行一次以设置初始值
 );
+
+const updateTheme = () => {
+    if (cookies.get("theme") === 'auto') {
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        changeTheme(isDark ? 'dark' : 'light');
+    } else {
+        changeTheme(cookies.get("theme"));
+    }
+};
+
+onMounted(() => {
+    updateTheme();
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', updateTheme);
+});
+
+onUnmounted(() => {
+    window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', updateTheme);
+    window.matchMedia('(prefers-color-scheme: light)').removeEventListener('change', updateTheme);
+});
 </script>
 
 <template>

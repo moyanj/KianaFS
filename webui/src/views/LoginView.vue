@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ElForm, ElFormItem, ElInput, ElButton, ElCard } from 'element-plus';
 import { ref } from 'vue';
-import { server } from '@/cfg';
+import { server, changeTheme } from '@/utils';
 import { useCookies } from 'vue3-cookies';
 import { useRouter } from 'vue-router';
+import ThemeManager from '@/components/ThemeManager.vue';
 
 const cookies = useCookies().cookies;
 const router = useRouter();
@@ -75,6 +76,7 @@ getHitokoto()
                 <br>
                 <div @click="getHitokoto" class="hitokoto">
                     <p>{{ hitokoto }}</p>
+                    <ThemeManager />
                 </div>
             </ElForm>
         </el-card>
@@ -113,7 +115,7 @@ getHitokoto()
 .container {
     justify-content: center;
     align-items: center;
-    width: 25%;
+    width: 30%;
     height: calc(100% - 40px);
     border-radius: 10px;
     max-width: 380px;
