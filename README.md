@@ -1,6 +1,6 @@
 # KianaFS
 
-![GitHub](https://img.shields.io/github/license/moyan/kianafs)
+![GitHub](https://img.shields.io/github/license/moyanj/kianafs)
 ![Database](https://img.shields.io/badge/database-PostgreSQL-blue)
 
 <p align="center">

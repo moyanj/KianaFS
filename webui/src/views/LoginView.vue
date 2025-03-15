@@ -76,8 +76,9 @@ getHitokoto()
                 <br>
                 <div @click="getHitokoto" class="hitokoto">
                     <p>{{ hitokoto }}</p>
-                    <ThemeManager />
+
                 </div>
+                <ThemeManager />
             </ElForm>
         </el-card>
     </div>
